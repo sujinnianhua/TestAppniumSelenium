@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+  <test thread-count="5" name="Test">
+    <classes>
+ <!--      <class name="cn.taofen8.test.T1"/>
+      <class name="cn.taofen8.ui.update"/>
+      <class name="test.T1"/> -->
+      <class name="cn.taofen8.test.tf8_test"/>
+      	<methods>
+      		<include name="test3"></include>
+      	</methods>
+<!--       <class name="test.T3"/>
+      <class name="test.TestBi"/>
+      <class name="cn.taofen8.util.Excel_read"/>
+      <class name="test.ScreenshotListener"/>
+      <class name="test.Texcel"/>
+      <class name="test.Screenshot"/>
+      <class name="cn.taofen8.util.getSms"/> -->
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- Suite -->

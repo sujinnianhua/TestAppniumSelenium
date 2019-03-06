@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+ "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap> 
+ 
+<typeAlias alias="Sms" type="cn.taofen8.model.Sms" />
+	
+	<select id="selectMobile" parameterClass="Sms" resultClass="Sms">
+		SELECT * FROM misc.mms_sms_log WHERE mobile=#mobile# ORDER BY request_time DESC LIMIT 1;
+	</select>  
+</sqlMap>

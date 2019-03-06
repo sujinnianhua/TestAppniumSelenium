@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="com.taofen8.user.dao.UCUserDAO">
+
+	<resultMap id="UserResultMap" class="com.taofen8.user.domain.User">
+		<result property="id" column="USER_ID" />
+		<result property="nick" column="USER_NICK" />
+		<result property="taobaoNick" column="TB_NICK" />
+		<result property="imsi" column="IMSI" />
+		<result property="imei" column="IMEI" />
+		<result property="alipay" column="ALIPAY_ACCOUNT" />
+		<result property="clientType" column="CLIENT_TYPE" />
+		<result property="clientVersion" column="CLIENT_VERSION" />
+		<result property="lastLoginTime" column="LAST_LOGIN_TIME" />
+		<result property="mobile" column="MOBILE" />
+		<result property="email" column="EMAIL" />
+		<result property="alipayRealName" column="ALIPAY_REALNAME" />
+		<result property="refer" column="REFER" />
+		<result property="firstLoginTime" column="FIRST_LOGIN_TIME" />
+		<result property="loginTimes" column="LOGIN_TIMES" />
+		<result property="level" column="LEVEL" />
+		<result property="sex" column="sex" />
+		<result property="channel" column="channel" />
+	</resultMap>
+	
+	<sql id="User_All_Columns">
+		USER_ID,USER_NICK,TB_NICK,IMSI,IMEI,ALIPAY_ACCOUNT,CLIENT_TYPE,CLIENT_VERSION,LAST_LOGIN_TIME,
+		MOBILE,EMAIL,ALIPAY_REALNAME,REFER,FIRST_LOGIN_TIME,LOGIN_TIMES,LEVEL,sex,channel
+	</sql>
+	
+	<insert id="addUser" parameterClass="com.taofen8.user.domain.User">
+    <![CDATA[
+        INSERT INTO mms_users (
+        	USER_ID,USER_NICK,TB_NICK,IMSI,IMEI,ALIPAY_ACCOUNT,CLIENT_TYPE,CLIENT_VERSION,LAST_LOGIN_TIME,
+        	MOBILE,EMAIL,ALIPAY_REALNAME,REFER,FIRST_LOGIN_TIME,LOGIN_TIMES,LEVEL,sex
+        ) VALUES (
+        	#id#,#nick#,#taobaoNick#,#imsi#,#imei#,#alipay#,#clientType#,#clientVersion#,now(),
+        	#mobile#,#email#,#alipayRealName#,#refer#,now(),1,#level#,#sex#
+        )
+    ]]>
+	</insert>
+
+	<update id="updateUser" parameterClass="com.taofen8.user.domain.User">
+		UPDATE mms_users 
+		SET LAST_LOGIN_TIME=NOW(), LOGIN_TIMES=LOGIN_TIMES+1
+		<isNotNull property="imsi" prepend=" , ">
+			IMSI=#imsi#
+		</isNotNull>
+		<isNotNull property="imei" prepend=" , ">
+			IMEI=#imei#
+		</isNotNull>
+		<isNotNull property="alipay" prepend=" , ">
+			ALIPAY_ACCOUNT=#alipay#
+		</isNotNull>
+		<isNotNull property="clientType" prepend=" , ">
+			CLIENT_TYPE=#clientType#
+		</isNotNull>
+		<isNotNull property="clientVersion" prepend=" , ">
+			CLIENT_VERSION=#clientVersion#
+		</isNotNull>
+		<isNotNull property="mobile" prepend=" , ">
+			MOBILE=#mobile#
+		</isNotNull>
+		<isNotNull property="email" prepend=" , ">
+			EMAIL=#email#
+		</isNotNull>
+		<isNotNull property="alipayRealName" prepend=" , ">
+			ALIPAY_REALNAME=#alipayRealName#
+		</isNotNull>
+		<isNotNull property="sex" prepend=" , ">
+			sex=#sex#
+		</isNotNull>
+		WHERE USER_ID=#id#
+	</update>
+
+	<select id="getUserById" parameterClass="java.lang.Long" resultMap="UserResultMap">
+		SELECT <include refid="User_All_Columns"/>
+		FROM mms_users 
+		WHERE USER_ID=#userId#
+	</select>
+
+	<select id="getUserByTBNick" parameterClass="java.lang.String" resultMap="UserResultMap">
+		SELECT <include refid="User_All_Columns"/>
+		FROM mms_users 
+		WHERE TB_NICK=#tbNick#
+	</select>
+	
+	<select id="getUserByUserNick" parameterClass="java.lang.String" resultMap="UserResultMap">
+		SELECT <include refid="User_All_Columns"/>
+		FROM mms_users 
+		WHERE USER_NICK=#userNick#
+	</select>
+	
+	<update id="syncUserMobileOrAlipay" parameterClass="com.taofen8.user.query.MmsChangeAlipay">
+		UPDATE mms_users
+		<dynamic prepend="set">
+			<isNotNull property="mobile" prepend=" , ">
+				MOBILE=#mobile#
+			</isNotNull>
+			<isNotNull property="alipayAccount" prepend=" , ">
+				ALIPAY_ACCOUNT=#alipayAccount#
+			</isNotNull>
+		</dynamic>
+		WHERE USER_ID=#userId#
+	</update>
+	
+	<update id="updateUserNickByUserId" parameterClass="com.taofen8.user.domain.User">
+		UPDATE mms_users 
+		SET user_nick=#nick# 
+		WHERE user_id=#id#
+	</update>
+
+	<select id="getUsersByAlipay" parameterClass="java.lang.String" resultMap="UserResultMap">
+		SELECT <include refid="User_All_Columns"/>
+		FROM mms_users
+		WHERE ALIPAY_ACCOUNT=#alipay#
+	</select>
+	
+	<select id="getUserAlipayCount" parameterClass="java.util.Map"  resultClass="java.lang.Integer">
+		select COUNT(1) 
+		from mms_users 
+		where ALIPAY_ACCOUNT = #alipay#
+		<isNotNull prepend="and" property="userId">
+			USER_ID != #userId#
+		</isNotNull>
+	</select>
+	
+	<update id="updateMmsUsersReferByUserId" parameterClass="com.taofen8.user.domain.User">
+		UPDATE mms_users SET LAST_LOGIN_TIME=now(), refer=#refer# WHERE USER_ID=#id# and REFER like 'mobile_%'
+	</update>
+	
+	<update id="updateUserForLastLoginTime" parameterClass="java.lang.Long">
+		UPDATE mms_users 
+		SET LAST_LOGIN_TIME = now(), LOGIN_TIMES = LOGIN_TIMES+1 
+		WHERE USER_ID=#userId#
+	</update>
+
+	<update id="updateUserForLastLoginTimeByDate" parameterClass="java.util.Map" >
+		UPDATE mms_users 
+		SET LAST_LOGIN_TIME = #lastLoginTime#, LOGIN_TIMES = LOGIN_TIMES+1 
+		WHERE USER_ID=#userId#
+	</update>
+		
+	<update id="deleteUserForUserTaskByUserId" parameterClass="java.lang.Long">
+		DELETE a FROM mms.mms_users a 
+		WHERE a.user_id=#userId# AND EXISTS (SELECT 1 FROM mms.mms_users_task_white b WHERE a.TB_NICK=b.user_nick)
+	</update>
+	
+	<update id="updateUserIdByTbNick" parameterClass="com.taofen8.user.domain.User">
+		update mms_users set 
+			LAST_LOGIN_TIME=NOW(),
+			LOGIN_TIMES=LOGIN_TIMES+1,
+			USER_ID=#id#
+		where TB_NICK=#taobaoNick#
+	</update>
+	
+	<delete id="deleteUserByUserId" parameterClass="java.lang.Long">
+		delete from mms_users where user_id = #userId#
+	</delete>
+	
+	<select id="countByfirstLoginTime" resultClass="java.lang.Integer" parameterClass="java.util.Map">
+		SELECT COUNT(1) 
+		FROM mms_users 
+		<![CDATA[
+			WHERE FIRST_LOGIN_TIME >= #startTime# and FIRST_LOGIN_TIME <= #endTime#
+		]]>
+	</select>
+	
+	<select id="countBylastLoginTime" resultClass="java.lang.Integer" parameterClass="java.util.Map">
+		SELECT COUNT(1) 
+		FROM mms_users 
+		<![CDATA[
+			WHERE LAST_LOGIN_TIME >= #startTime# and LAST_LOGIN_TIME <= #endTime#
+		]]>
+	</select>
+	
+	<select id="countMMsUsers" resultClass="java.lang.Integer">
+		<![CDATA[
+		   select count(1) 
+		   from mms_users 
+		   where first_login_time >= '2012-08-27 00:00:00' 
+		]]>
+	</select>
+	
+	<select id="getMMsUsersList" resultMap="UserResultMap" parameterClass="java.util.Map">
+		 	select <include refid="User_All_Columns"/> 
+		 	from mms_users  
+		 	<![CDATA[
+		 		where first_login_time >= '2012-08-27 00:00:00' 
+		 		order by user_id 
+		 		limit #start#, #end#
+			]]>
+	</select>
+	
+	<select id="getUserByMobile" resultMap="UserResultMap" parameterClass="java.lang.String">
+		select <include refid="User_All_Columns"/> 
+		from mms_users
+		where mobile=#mobile#
+	</select>
+	
+	<select id="getUserByWrongTBNick" parameterClass="java.util.Map" resultMap="UserResultMap">
+		select <include refid="User_All_Columns"/> 
+		from mms_users 
+		where TB_NICK like'%\%%' 
+		order by user_id desc 
+		limit #start#, #end#
+	</select>
+	
+	<select id="getUserCountByWrongTBNick" resultClass="java.lang.Integer">
+		select count(1) 
+		from mms_users 
+		where TB_NICK like'%\%%'
+	</select>
+	
+	<select id="getTaobaoNicksByAlipay" parameterClass="java.lang.String"  resultClass="java.lang.String">
+		select distinct(TB_NICK) 
+		from mms_users 
+		where ALIPAY_ACCOUNT = #alipay#
+	</select>
+	
+	<select id="getUserCountByFirstLoginTime" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		select count(1) 
+		from mms_users 
+		where 
+		<![CDATA[
+			first_login_time >= #startTime# 
+			and first_login_time < #endTime# 
+		]]>
+	</select>
+
+	<select id="getUserListByFirstLoginDate" parameterClass="java.util.Map" resultMap="UserResultMap">
+		select <include refid="User_All_Columns"/> 
+		from mms_users 
+		<![CDATA[
+		where user_id > #startUserId#
+		  and first_login_time >= #startTime# 
+		  and first_login_time < #endTime# 
+		]]>	
+		order by user_id asc
+		limit #pageSize#
+	</select>
+	
+	<select id="getUserByIds" parameterClass="java.util.ArrayList" resultMap="UserResultMap">
+		SELECT <include refid="User_All_Columns"/>
+		FROM mms_users 
+		WHERE USER_ID IN 
+		<iterate close=")" open="("  conjunction=",">
+			#userIds[]#
+		</iterate>
+	</select>
+	
+	<select id="countByTbNick" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+		SELECT count(1) 
+		FROM mms_users 
+		WHERE TB_NICK Like #nick#
+	</select>
+	
+	<update id="updateUserNickAndTbNickByUserId" parameterClass="java.util.Map">
+		UPDATE mms_users
+		SET user_nick = #userNick#, tb_nick = #tbNick#
+		WHERE user_id = #userId# and tb_nick like '%\%%'
+		LIMIT 1
+	</update>
+	
+	<select id="getUserByPageStartId" parameterClass="java.util.Map" resultMap="UserResultMap">
+		SELECT <include refid="User_All_Columns"/>
+		FROM mms_users 
+		WHERE user_id > #startId#
+		ORDER BY user_id ASC
+		LIMIT #size#
+	</select>
+
+	<select id="getUserIdByUserNick" parameterClass="string" resultClass="long">
+		SELECT user_id FROM mms_users
+		WHERE user_nick = #userNick# or user_nick = concat(#userNick#,'@tf8') or user_nick = concat(#userNick#,'@taobao') limit 1
+	</select>
+	
+	<select id="getUserListByLastLoginDate" parameterClass="java.util.Map" resultMap="UserResultMap">
+		select <include refid="User_All_Columns"/> 
+		from mms_users 
+		<![CDATA[
+		where user_id > #startUserId#
+		  and last_login_time >= #startTime# 
+		  and last_login_time < #endTime# 
+		  and refer not like '%wanpu%' 
+		  and refer not like '%fz_android%'
+		]]>	
+		order by user_id asc
+		limit #pageSize#
+	</select>
+
+	<select id="getUserListByUserNick" parameterClass="string" resultMap="UserResultMap">
+		SELECT <include refid="User_All_Columns"/> FROM mms_users
+		WHERE user_nick = #userNick# or user_nick = concat(#userNick#,'@tf8') or user_nick = concat(#userNick#,'@taobao')
+	</select>
+	
+	<update id="updateUserReferByUserId" parameterClass="java.util.HashMap">
+		update mms_users set refer=#refer# WHERE USER_ID=#userId# and REFER like 'mobile_%'
+	</update>
+	
+	<update id="updateUserLastLoginTime" parameterClass="java.util.HashMap">
+		update mms_users set last_login_time=#lastLoginTime# WHERE USER_ID=#userId#
+	</update>
+
+	<select id="queryNewUserLevelLt2AndNotInTbUserLevelList" resultMap="UserResultMap">
+		select <include refid="User_All_Columns"/>
+        from mms_users mu
+		<![CDATA[
+        where first_login_time>=current_date and level < 2
+        and not exists (select 1 from mms_users_tb_level mutl where mu.USER_ID=mutl.user_id)
+        ]]>
+	</select>
+
+	<select id="queryLastSomeDayLoginUserList" parameterClass="java.util.Map" resultMap="UserResultMap">
+        select <include refid="User_All_Columns"/>
+        from mms_users
+        where user_id > #startUserId# and last_login_time>=date_sub(current_date, interval #subDayAmount# day)
+        order by user_id asc
+        limit #pageSize#
+	</select>
+</sqlMap>

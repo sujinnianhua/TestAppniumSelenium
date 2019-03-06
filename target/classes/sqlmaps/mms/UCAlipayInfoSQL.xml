@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="com.taofen8.user.dao.UCAlipayInfoDAO">
+<typeAlias alias="AlipayInfo" type="com.taofen8.user.domain.AlipayInfo"/>
+	<resultMap id="AlipayInfoResultMap" class="AlipayInfo">
+		<result property="id" column="id" />
+		<result property="alipay" column="alipay" />
+		<result property="valid" column="valid" />
+		<result property="realNameAuthorized" column="real_name_authorized" />
+		<result property="lastPayTime" column="last_pay_time" />
+		<result property="confirmAuthorizedTime" column="confirm_authorized_time" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+	
+	<sql id="AlipayInfo_All_Columns">
+		id,alipay,valid,real_name_authorized,last_pay_time,confirm_authorized_time,create_time,update_time
+	</sql>
+
+	<insert id="saveAlipayInfo" parameterClass="AlipayInfo">
+		INSERT INTO mms_alipay_info (
+			alipay,valid,real_name_authorized,
+			last_pay_time,confirm_authorized_time,
+			create_time,update_time
+		) VALUES (
+			#alipay#,#valid#,#realNameAuthorized#,
+			#lastPayTime#,#confirmAuthorizedTime#,
+			now(),now()
+		)
+		<selectKey resultClass="long" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+	</insert>
+
+	<select id="getAlipayInfoByAlipay" parameterClass="java.lang.String" resultMap="AlipayInfoResultMap">
+		SELECT <include refid="AlipayInfo_All_Columns"/>
+		FROM mms_alipay_info 
+		WHERE alipay = #alipay# limit 1
+	</select>
+	
+	<update id="updateValidStatus" parameterClass="java.util.HashMap">
+		UPDATE mms_alipay_info 
+		SET valid = #valid# where id = #id#
+	</update>
+	
+	<update id="updateLastPayTime" parameterClass="java.util.HashMap">
+		UPDATE mms_alipay_info 
+		SET last_pay_time = #lastPayTime# where id = #id#
+	</update>
+	
+	<update id="updateConfirmAuthorizedTime" parameterClass="java.util.HashMap">
+		UPDATE mms_alipay_info 
+		SET confirm_authorized_time = #confirmAuthorizedTime# where id = #id#
+	</update>
+	
+</sqlMap>

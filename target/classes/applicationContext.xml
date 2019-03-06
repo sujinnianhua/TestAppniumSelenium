@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+	
+<!--  	<bean id="MMSdataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://122.225.115.37:3306/mms"/>
+		<property name="username" value="mms"/>
+		<property name="password" value="mmstf8@)!@"></property>
+	</bean> -->
+	
+		<bean id="MobiledataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://122.225.115.41:8066/mobile"/>
+		<property name="username" value="tf8user"/>
+		<property name="password" value="Tech!@#Tf*$%^"></property>
+	</bean>
+	
+	 <bean id="MobilesqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+        <property name="configLocation">  <!-- name 为configLocation或s  不可为其他 -->
+            <value>SqlMapConfig.xml</value> <!-- 不区分大小写，路径前可加'/' -->
+        </property>
+        
+        <property name="dataSource" ref="MobiledataSource" />
+    </bean>
+    
+	<bean id="MobileBaseDAO" class="cn.taofen8.dao.BaseDAO">
+		<property name="sqlMapClient" ref="MobilesqlMapClient" />
+	</bean>
+	
+	<bean id="MobileBannerBaseDAO" class="cn.taofen8.dao.impl.MobileBannerBaseDAOImpl" parent="MobileBaseDAO">
+	</bean>
+
+		<bean id="MiscdataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://122.225.115.41:8066/misc"/>
+		<property name="username" value="tf8user"/>
+		<property name="password" value="Tech!@#Tf*$%^"></property>
+	</bean>
+	
+	 <bean id="MiscsqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+        <property name="configLocation">  <!-- name 为configLocation或s  不可为其他 -->
+            <value>SqlMapConfig.xml</value> <!-- 不区分大小写，路径前可加'/' -->
+        </property>
+        
+        <property name="dataSource" ref="MiscdataSource" />
+    </bean>
+    
+	<bean id="MiscBaseDAO" class="cn.taofen8.dao.BaseDAO">
+		<property name="sqlMapClient" ref="MiscsqlMapClient" />
+	</bean>
+	
+	<bean id="Tf8DAO" class="cn.taofen8.dao.impl.Tf8DAOImpl" parent="MiscBaseDAO">
+	</bean>
+	
+	<bean id="MMSdataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://122.225.115.41:8066/mms"/>
+		<property name="username" value="tf8user"/>
+		<property name="password" value="Tech!@#Tf*$%^"></property>
+	</bean>
+	
+	<bean id="MmssqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+        <property name="configLocation">  <!-- name 为configLocation或s  不可为其他 -->
+            <value>SqlMapConfig.xml</value> <!-- 不区分大小写，路径前可加'/' -->
+        </property>
+        
+        <property name="dataSource" ref="MMSdataSource" />
+    </bean>
+    
+    <bean id="MmsBaseDAO" class="cn.taofen8.dao.BaseDAO">
+		<property name="sqlMapClient" ref="MmssqlMapClient" />
+	</bean>
+	
+	<bean id="BillDetailDAO" class="cn.taofen8.dao.impl.BillDetailDAOImpl" parent="MmsBaseDAO">
+	</bean>
+	
+	<bean id="UserDAO" class="cn.taofen8.dao.impl.UserDAOImpl" parent="MmsBaseDAO">
+	</bean>
+	
+</beans>

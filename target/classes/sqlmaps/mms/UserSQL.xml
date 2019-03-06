@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="cn.taofen8.dao.UCUserDAO">
+
+	<resultMap id="UserResultMap" class="cn.taofen8.model.User">
+		<result property="id" column="USER_ID" />
+		<result property="nick" column="USER_NICK" />
+		<result property="taobaoNick" column="TB_NICK" />
+		<result property="imsi" column="IMSI" />
+		<result property="imei" column="IMEI" />
+		<result property="alipay" column="ALIPAY_ACCOUNT" />
+		<result property="clientType" column="CLIENT_TYPE" />
+		<result property="clientVersion" column="CLIENT_VERSION" />
+		<result property="lastLoginTime" column="LAST_LOGIN_TIME" />
+		<result property="mobile" column="MOBILE" />
+		<result property="email" column="EMAIL" />
+		<result property="alipayRealName" column="ALIPAY_REALNAME" />
+		<result property="refer" column="REFER" />
+		<result property="firstLoginTime" column="FIRST_LOGIN_TIME" />
+		<result property="loginTimes" column="LOGIN_TIMES" />
+		<result property="level" column="LEVEL" />
+		<result property="sex" column="sex" />
+		<result property="channel" column="channel" />
+	</resultMap>
+	
+	<sql id="User_All_Columns">
+		USER_ID,USER_NICK,TB_NICK,IMSI,IMEI,ALIPAY_ACCOUNT,CLIENT_TYPE,CLIENT_VERSION,LAST_LOGIN_TIME,
+		MOBILE,EMAIL,ALIPAY_REALNAME,REFER,FIRST_LOGIN_TIME,LOGIN_TIMES,LEVEL,sex,channel
+	</sql>
+
+	<select id="getUserByTBNick" parameterClass="java.lang.String" resultMap="UserResultMap">
+		SELECT <include refid="User_All_Columns"/>
+		FROM mms_users 
+		WHERE TB_NICK=#tbNick#
+	</select>
+	
+</sqlMap>

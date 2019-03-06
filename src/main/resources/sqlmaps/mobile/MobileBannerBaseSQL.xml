@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="cn.taofen8.dao.MobileBannerBaseDAO">
+    <resultMap id="MobileBannerBaseMap" class="cn.taofen8.model.MobileBannerBase">
+        <result column="id" property="id"  />
+	    <result column="type" property="type"  />
+	    <result column="position" property="position"  />
+	    <result column="event_type" property="eventType"  />
+	    <result column="event_arg" property="eventArg"  />
+	    <result column="condition_str" property="conditionStr"  />
+	    <result column="create_by" property="createBy"  />
+	    <result column="start_time" property="startTime"  />
+	    <result column="end_time" property="endTime"  />
+	    <result column="create_time" property="createTime"  />
+	    <result column="update_time" property="updateTime"  />
+    </resultMap>
+
+    <sql id="Mobile_Banner_Base_All_Columns">
+         id, type, position, event_type, event_arg, condition_str, create_by, 
+         start_time, end_time, create_time, update_time
+    </sql>
+    
+	<select id="countMobileBannerBaseListByType"  resultClass="java.lang.Integer" parameterClass="java.util.Map"> 
+        SELECT count(*)
+        FROM mobile_banner_base
+        WHERE type=#type# and 
+        <![CDATA[
+        	start_time<now() and end_time>now()
+        ]]>
+    </select>
+    
+</sqlMap>

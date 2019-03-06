@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+<sqlMap namespace="cn.taofen8.dao.BillDetailDAO">
+	
+	<resultMap id="BillDetail" class="cn.taofen8.model.BillDetail">
+		<result property="billId" column="bill_id"/>
+		<result property="billType" column="bill_type"/>
+		<result property="outerId1" column="outer_id_1"/>
+		<result property="outerId2" column="outer_id_2"/>
+		<result property="outerId3" column="outer_id_3"/>
+		<result property="outerRef" column="outer_ref"/>
+		<result property="outerRef1" column="outer_ref1"/>
+		<result property="payMethod" column="pay_method"/>
+		<result property="priority" column="priority"/>
+		<result property="userId" column="user_id"/>
+		<result property="userNick" column="user_nick"/>
+		<result property="alipay" column="alipay"/>
+		<result property="mobile" column="mobile"/>
+		<result property="amount" column="amount"/>
+		<result property="point" column="point"/>
+		<result property="createDate" column="create_date"/>
+		<result property="createTime" column="create_time"/>
+		<result property="billStatus" column="bill_status"/>
+		<result property="responseError" column="response_error"/>
+		<result property="payDate" column="pay_date"/>
+		<result property="payTime" column="pay_time"/>
+		<result property="pushStatus" column="push_status"/>
+		<result property="message" column="message"/>
+		<result property="writeBackStatus" column="wb_status"/>
+	</resultMap>
+	
+	<select id="errorAlipay" parameterClass="cn.taofen8.model.BillDetail" resultClass="java.lang.Integer">
+			select count(*) from mms.bill_detail where user_id=#userId# and bill_status in (6,7);
+	</select>
+
+</sqlMap>
